@@ -64,4 +64,7 @@
                 {["element"] ["error"]})
     (is-invalid (run-all (failure "error1") (failure "error2"))
                 standard-args
-                {["element"] ["error1" "error2"]}))
+                {["element"] ["error1" "error2"]})
+    (is-invalid (run-all (failure "error1") (failure "error2"))
+                '({} {:a :b} ["element"])
+                {:a :b ["element"] ["error1" "error2"]}))
