@@ -1,11 +1,5 @@
 (ns composable-validations-clj.core)
 
-;; TODO: make sure that it preserves errors already existing at the path
-(defn add-error
-  "adds error at the path"
-  [e p message]
-  (assoc e p [message]))
-
 (defn merge-errors
   "merges two collections of errors ensuring no loss of error messages"
   [e1 e2]
@@ -17,7 +11,7 @@
   (fn [o e p]
     (if (pred o)
       [true e]
-      [false (add-error e p message)])))
+      [false (merge-errors e {p [message]})])))
 
 (defn fail-fast
   "combinator returning errors of first failing validator"

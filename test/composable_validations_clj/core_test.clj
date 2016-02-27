@@ -27,13 +27,14 @@
 
 (deftest composable-validations
 
-  (testing "validate function success"
-    (is-valid (validate always-true "error") standard-args))
-
-  (testing "validate function failure"
+  (testing "validate"
+    (is-valid (validate always-true "error") standard-args)
     (is-invalid (validate always-false "error")
                 standard-args
-                {["element"] ["error"]}))
+                {["element"] ["error"]})
+    (is-invalid (validate always-false "error2")
+                '({} {["element"] ["error1"]} ["element"])
+                {["element"] ["error1" "error2"]}))
 
   (testing "fail-fast"
     (is-valid (fail-fast) standard-args)
