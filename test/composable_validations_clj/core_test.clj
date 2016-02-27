@@ -80,4 +80,10 @@
     (is-valid (string) '("hello" {} ["element"]))
     (is-invalid (string)
                 '(1 {} ["element"])
-                {["element"] [:string]})))
+                {["element"] [:string]}))
+
+  (testing "just-object"
+    (is-valid (just-object) '({} {} ["element"]))
+    (is-invalid (just-object)
+                '(1 {} ["element"])
+                {["element"] [:just-object]})))
