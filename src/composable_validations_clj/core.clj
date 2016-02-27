@@ -6,6 +6,11 @@
   [e p message]
   (assoc e p [message]))
 
+(defn merge-errors
+  "merges two collections of errors ensuring no loss of error messages"
+  [e1 e2]
+  (merge-with concat e1 e2))
+
 (defn validate
   "helper function to build validators from predicates"
   [pred message]
@@ -25,3 +30,12 @@
           (if (= (first first-result) true)
             (recur (rest vs))
             first-result))))))
+
+(defn run-all
+  "combinator running all validators and collecting all of their errors"
+  [& validators]
+  (fn [o e p]
+    (reduce (fn [[acc-result acc-errors] [result errors]]
+              [(and acc-result result) (merge-errors acc-errors errors)])
+            [true e]
+            (map #(%1 o {} p) validators))))

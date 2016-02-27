@@ -4,8 +4,10 @@
 
 (def always-true (fn [o] true))
 (def always-false (fn [o] false))
-(def always-success (validate always-true "error"))
-(def always-failure (validate always-false "error"))
+(def success (validate always-true "error"))
+(defn failure
+  ([message] (validate always-false message))
+  ([] (failure "error")))
 (def standard-args '({} {} ["element"]))
 
 (defn is-valid
@@ -33,20 +35,33 @@
                 standard-args
                 {["element"] ["error"]}))
 
-  (testing "fail-fast combinator with no validators"
-    (is-valid (fail-fast) standard-args))
-
-  (testing "fail-fast combinator success"
-    (is-valid (fail-fast always-success) standard-args)
-    (is-valid (fail-fast always-success always-success) standard-args))
-
-  (testing "fail-fast combinator failure"
-    (is-invalid (fail-fast always-failure)
+  (testing "fail-fast"
+    (is-valid (fail-fast) standard-args)
+    (is-valid (fail-fast success) standard-args)
+    (is-valid (fail-fast success success) standard-args))
+    (is-invalid (fail-fast (failure))
                 standard-args
                 {["element"] ["error"]})
-    (is-invalid (fail-fast always-failure always-success)
+    (is-invalid (fail-fast (failure) success)
                 standard-args
                 {["element"] ["error"]})
-    (is-invalid (fail-fast always-success always-failure)
+    (is-invalid (fail-fast success (failure))
                 standard-args
-                {["element"] ["error"]})))
+                {["element"] ["error"]})
+
+  (testing "run-all"
+    (is-valid (run-all) standard-args)
+    (is-valid (run-all success) standard-args)
+    (is-valid (run-all success success) standard-args))
+    (is-invalid (run-all (failure))
+                standard-args
+                {["element"] ["error"]})
+    (is-invalid (run-all (failure) success)
+                standard-args
+                {["element"] ["error"]})
+    (is-invalid (run-all success (failure))
+                standard-args
+                {["element"] ["error"]})
+    (is-invalid (run-all (failure "error1") (failure "error2"))
+                standard-args
+                {["element"] ["error1" "error2"]}))
