@@ -33,3 +33,13 @@
               [(and acc-result result) (merge-errors acc-errors errors)])
             [true e]
             (map #(%1 o {} p) validators))))
+
+(defn is-of-type
+  "validator ensuring type of object"
+  [klass message]
+  (validate #(instance? klass %1) message))
+
+(defn string
+  "validator ensuring that validated object is a string"
+  ([message] (is-of-type String message))
+  ([] (string :string)))

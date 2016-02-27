@@ -68,4 +68,16 @@
                 {["element"] ["error1" "error2"]})
     (is-invalid (run-all (failure "error1") (failure "error2"))
                 '({} {:a :b} ["element"])
-                {:a :b ["element"] ["error1" "error2"]}))
+                {:a :b ["element"] ["error1" "error2"]})
+
+  (testing "is-of-type"
+    (is-valid (is-of-type String "error") '("hello" {} ["element"]))
+    (is-invalid (is-of-type String "error")
+                '(1 {} ["element"])
+                {["element"] ["error"]}))
+
+  (testing "string"
+    (is-valid (string) '("hello" {} ["element"]))
+    (is-invalid (string)
+                '(1 {} ["element"])
+                {["element"] [:string]})))
