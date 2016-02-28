@@ -10,19 +10,15 @@
   ([] (failure "error")))
 (def standard-args '({} {} ["element"]))
 
-(defn is-valid
-  "asserts that validator succeeds when applied to standard args"
+(defmacro is-valid
+  "asserts that validator succeeds when applied to args"
   [validator args]
-  (is (=
-       (apply validator args)
-       [true {}])))
+  `(is (= (apply ~validator ~args) [true {}])))
 
-(defn is-invalid
-  "asserts that validator fails with errors when applied to standard args"
+(defmacro is-invalid
+  "asserts that validator fails with errors when applied to args"
   [validator args errors]
-  (is (=
-       (apply validator args)
-       [false errors])))
+  `(is (= (apply ~validator ~args) [false ~errors])))
 
 
 (deftest composable-validations
