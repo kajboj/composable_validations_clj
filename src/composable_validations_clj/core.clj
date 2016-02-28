@@ -41,10 +41,10 @@
 
 (defn string
   "validator ensuring that validated object is a string"
-  ([message] (is-of-type String message))
-  ([] (string :string)))
+  [& {:keys [msg] :or {msg :string}}]
+  (is-of-type String msg))
 
 (defn just-object
   "validator ensuring that validated object is a hash map (JSON object)"
-  ([message] (is-of-type clojure.lang.PersistentArrayMap message))
-  ([] (just-object :just-object)))
+  [& {:keys [msg] :or {msg :just-object}}]
+  (is-of-type clojure.lang.PersistentArrayMap msg))

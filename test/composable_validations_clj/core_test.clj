@@ -74,9 +74,9 @@
 
   (testing "string"
     (is-valid (string) '("hello" {} ["element"]))
-    (is-invalid (string)
+    (is-invalid (string :msg :custom-message)
                 '(1 {} ["element"])
-                {["element"] [:string]}))
+                {["element"] [:custom-message]}))
 
   (testing "just-object"
     (is-valid (just-object) '({} {} ["element"]))
