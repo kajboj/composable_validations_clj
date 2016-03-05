@@ -2,12 +2,12 @@
 
 (defprotocol ErrorCollection
   "Collection of validation errors"
-  (add-error [errors path message] "adding new error to the collection"))
+  (add-error [errors path message object] "adding new error to the collection"))
 
 (extend-type
   clojure.lang.PersistentArrayMap
   ErrorCollection
-  (add-error [this path message]
+  (add-error [this path message object]
     (merge-with concat this {path [message]})))
 
 (defn validate
@@ -16,7 +16,7 @@
   (fn [o e p]
     (if (pred o)
       [true e]
-      [false (add-error e p message)])))
+      [false (add-error e p message o)])))
 
 (defn fail-fast
   "combinator returning errors of first failing validator"
