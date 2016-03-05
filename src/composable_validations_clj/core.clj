@@ -1,9 +1,10 @@
 (ns composable-validations-clj.core)
 
-(defn merge-errors
-  "merges two collections of errors ensuring no loss of error messages"
-  [e1 e2]
-  (merge-with concat e1 e2))
+(defn add-error
+  "adds new error to the collection of errors ensuring no loss of existing
+  error messages"
+  [errors path message]
+  (merge-with concat errors {path [message]}))
 
 (defn validate
   "helper function to build validators from predicates"
@@ -11,7 +12,7 @@
   (fn [o e p]
     (if (pred o)
       [true e]
-      [false (merge-errors e {p [message]})])))
+      [false (add-error e p message)])))
 
 (defn fail-fast
   "combinator returning errors of first failing validator"
@@ -29,10 +30,12 @@
   "combinator running all validators and collecting all of their errors"
   [& validators]
   (fn [o e p]
-    (reduce (fn [[acc-result acc-errors] [result errors]]
-              [(and acc-result result) (merge-errors acc-errors errors)])
-            [true e]
-            (map #(%1 o {} p) validators))))
+    (reduce
+      (fn [[acc-result acc-errors] validator]
+        (let [[result errors] (validator o acc-errors p)]
+          [(and acc-result result) errors]))
+      [true e]
+      validators)))
 
 (defn is-of-type
   "validator ensuring type of object"
