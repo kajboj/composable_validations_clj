@@ -1,10 +1,14 @@
 (ns composable-validations-clj.core)
 
-(defn add-error
-  "adds new error to the collection of errors ensuring no loss of existing
-  error messages"
-  [errors path message]
-  (merge-with concat errors {path [message]}))
+(defprotocol ErrorCollection
+  "Collection of validation errors"
+  (add-error [errors path message] "adding new error to the collection"))
+
+(extend-type
+  clojure.lang.PersistentArrayMap
+  ErrorCollection
+  (add-error [this path message]
+    (merge-with concat this {path [message]})))
 
 (defn validate
   "helper function to build validators from predicates"
