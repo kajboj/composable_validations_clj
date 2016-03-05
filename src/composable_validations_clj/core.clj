@@ -40,17 +40,15 @@
   (validate #(instance? klass %1) message))
 
 (defmacro def-type-validator
-  [name description klass message]
+  [name description klass]
   `(defn ~name
      ~(clojure.string/join " "
        ["validator ensuring that validated object is" description])
-     [& {:keys [~'msg] :or {~'msg ~message}}]
+     [& {:keys [~'msg] :or {~'msg ~(keyword name)}}]
      (is-of-type ~klass ~'msg)))
 
-(def-type-validator string
-  "a string"
-  String :string)
+(def-type-validator string "a string" String)
 
 (def-type-validator just-object
   "a hash map (JSON object)"
-  clojure.lang.PersistentArrayMap :just-object)
+  clojure.lang.PersistentArrayMap)
