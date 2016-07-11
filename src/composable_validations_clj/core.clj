@@ -54,15 +54,31 @@
      [& {:keys [~'msg] :or {~'msg ~(keyword name)}}]
      (is-of-type ~klass ~'msg)))
 
+(defmacro def-validate-type-and-run-all
+  [name description type-validator]
+  `(defn ~name
+     ~description
+     [& ~'validators]
+     (fail-fast
+       (~type-validator)
+       (apply run-all ~'validators))))
+
 (def-type-validator string "a string" String)
 
 (def-type-validator just-object
   "an object"
   clojure.lang.PersistentArrayMap)
 
-(defn object
+(def-validate-type-and-run-all
+  object
   "an object passing validations"
-  [& validators]
-  (fail-fast
-    (just-object)
-    (apply run-all validators)))
+  just-object)
+
+(def-type-validator just-array
+  "an array"
+  clojure.lang.PersistentVector)
+
+(def-validate-type-and-run-all
+  array
+  "an array passing validations"
+  just-array)

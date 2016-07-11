@@ -90,9 +90,27 @@
       (is-invalid (object)
                   '(1 {} ["element"])
                   {["element"] [:just-object]}))
-    (testing "with some vaildators"
+    (testing "with some validators"
       (is-valid (object success success) '({} {} ["element"]))
       (is-invalid (object (failure "error1") (failure "error2"))
                   '({} {} ["element"])
+                  {["element"] ["error1", "error2"]})))
+
+  (testing "just-array"
+    (is-valid (just-array) '([] {} ["element"]))
+    (is-invalid (just-array)
+                '(1 {} ["element"])
+                {["element"] [:just-array]}))
+
+  (testing "array"
+    (testing "with no args"
+      (is-valid (array) '([] {} ["element"]))
+      (is-invalid (array)
+                  '({} {} ["element"])
+                  {["element"] [:just-array]}))
+    (testing "with some validators"
+      (is-valid (array success success) '([] {} ["element"]))
+      (is-invalid (array (failure "error1") (failure "error2"))
+                  '([] {} ["element"])
                   {["element"] ["error1", "error2"]})))
 )
