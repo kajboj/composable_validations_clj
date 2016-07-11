@@ -82,4 +82,17 @@
     (is-valid (just-object) '({} {} ["element"]))
     (is-invalid (just-object)
                 '(1 {} ["element"])
-                {["element"] [:just-object]})))
+                {["element"] [:just-object]}))
+
+  (testing "object"
+    (testing "with no args"
+      (is-valid (object) '({} {} ["element"]))
+      (is-invalid (object)
+                  '(1 {} ["element"])
+                  {["element"] [:just-object]}))
+    (testing "with some vaildators"
+      (is-valid (object success success) '({} {} ["element"]))
+      (is-invalid (object (failure "error1") (failure "error2"))
+                  '({} {} ["element"])
+                  {["element"] ["error1", "error2"]})))
+)

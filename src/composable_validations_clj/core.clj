@@ -57,5 +57,12 @@
 (def-type-validator string "a string" String)
 
 (def-type-validator just-object
-  "a hash map (JSON object)"
+  "an object"
   clojure.lang.PersistentArrayMap)
+
+(defn object
+  "an object passing validations"
+  [& validators]
+  (fail-fast
+    (just-object)
+    (apply run-all validators)))
