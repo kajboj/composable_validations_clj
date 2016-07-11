@@ -82,3 +82,16 @@
   array
   "an array passing validations"
   just-array)
+
+(defn presence-of-key
+  "validates that hash contains given key"
+  [key & {:keys [msg] :or {msg [:presence-of-key key]}}]
+  (validate #(contains? %1 key) msg))
+
+(defn has-key
+  "required key passing validations"
+  [key & validators]
+  (fail-fast
+    (presence-of-key key)
+    (fn [o e p]
+      ((apply run-all validators) (o key) e (conj p key)))))

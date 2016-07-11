@@ -113,4 +113,28 @@
       (is-invalid (array (failure "error1") (failure "error2"))
                   '([] {} ["element"])
                   {["element"] ["error1", "error2"]})))
+
+  (testing "presence-of-key"
+    (testing "with default message"
+      (is-valid (presence-of-key "key") '({"key" 3} {} ["element"]))
+      (is-invalid (presence-of-key "key")
+                  '({} {} ["element"])
+                  {["element"] [[:presence-of-key "key"]]}))
+    (testing "with message override"
+      (is-valid (presence-of-key "key" :msg "hello") '({"key" 3} {} ["element"]))
+      (is-invalid (presence-of-key "key" :msg "hello")
+                  '({} {} ["element"])
+                  {["element"] ["hello"]})))
+
+  (testing "has-key"
+    (testing "without validators"
+      (is-valid (has-key "a") '({"a" 3} {} ["element"]))
+      (is-invalid (has-key "a")
+                  '({} {} ["element"])
+                  {["element"] [[:presence-of-key "a"]]}))
+    (testing "with validators"
+      (is-valid (has-key "a" success success) '({"a" 3} {} ["element"]))
+      (is-invalid (has-key "a" (failure "error1") (failure "error2"))
+                  '({"a" 3} {} ["element"])
+                  {["element", "a"] ["error1" "error2"]})))
 )
